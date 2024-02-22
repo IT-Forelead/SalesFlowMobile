@@ -1,10 +1,9 @@
 import React from 'react';
-import {useState} from 'react';
-import {SafeAreaView, StyleSheet, Text} from 'react-native';
+import {useEffect, useState} from 'react';
+import {BackHandler, SafeAreaView, StyleSheet, Text} from 'react-native';
 import Login from './components/Login';
 import Scanner from './components/Scanner';
 import ProductAdd from './components/ProductAdd';
-import {storage} from './lib/storage';
 import {getByBarcode} from './lib/products';
 import {ProductAddData} from './models/products';
 import Loading from './components/Loading';
@@ -18,15 +17,32 @@ export default function App(): React.JSX.Element {
   const [page, setPage] = useState<Page>(check_auth() ? 'scanner' : 'login');
   const [productAddData, setProductAddData] = useState<ProductAddData>({});
 
+  useEffect(() => {
+    const backAction = () => {
+      if (page === 'product-add') {
+        setPage('scanner');
+        return true;
+      }
+      return false;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      backAction,
+    );
+
+    return () => backHandler.remove();
+  }, [page]);
+
   function onScanned(value: string) {
     console.log('scanned. data is', value);
-    // setPage('loading');
+    setPage('loading');
     getByBarcode(value)
       .then(data => {
         data
           ? setProductAddData({
               barcode: data.barcode,
-              name: data.name,
+              name: data.trademark,
               packaging: data.packaging,
             })
           : setProductAddData({barcode: +value});
@@ -40,11 +56,6 @@ export default function App(): React.JSX.Element {
   function onProductAdded() {
     setPage('success');
   }
-
-  // console.log('all data on MMKV');
-  // storage.getAllKeys().map(key => {
-  //   console.log(`MMKV: ${key} = ${storage.getString(key)}`);
-  // });
 
   return (
     <SafeAreaView style={styles.view}>

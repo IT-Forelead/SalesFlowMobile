@@ -10,7 +10,11 @@ export default function Success({onClick}: SuccessProps): React.JSX.Element {
   return (
     <View style={styles.view}>
       <Text variant="displayMedium">Product added</Text>
-      {onClick ? <Button onPress={onClick}>Scan</Button> : null}
+      {onClick ? (
+        <Button onPress={onClick} mode="contained" style={styles.button}>
+          Scan
+        </Button>
+      ) : null}
     </View>
   );
 }
@@ -20,5 +24,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  button: {
+    marginTop: 24,
   },
 });

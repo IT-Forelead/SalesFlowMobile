@@ -43,6 +43,7 @@ export async function refreshToken() {
     if (!session?.accessToken) {
       storage.delete('access_token');
       storage.delete('refresh_token');
+      storage.delete('authed_on');
     }
 
     storage.set('access_token', res.data.accessToken);
@@ -54,6 +55,7 @@ export async function refreshToken() {
     if (error?.response?.status === 403) {
       storage.delete('access_token');
       storage.delete('refresh_token');
+      storage.delete('authed_on');
       // TODO: redirect the user to the login
     }
   }

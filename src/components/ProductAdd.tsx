@@ -19,8 +19,10 @@ export default function ProductAdd({
   onProductAdded,
 }: ProductAddProps): React.JSX.Element {
   const [product, setProduct] = useState<ProductAddForm>(productAddData);
+  const [adding, setAdding] = useState<boolean>(false);
 
   function sendData() {
+    setAdding(true);
     const data: ProductAddType = {
       barcode: product.barcode!,
       name: product.name!,
@@ -99,7 +101,12 @@ export default function ProductAdd({
         style={styles.segmentedButtons}
       />
 
-      <Button mode="contained" style={styles.button} onPress={sendData}>
+      <Button
+        mode="contained"
+        style={styles.button}
+        onPress={sendData}
+        loading={adding}
+        disabled={adding}>
         Add
       </Button>
     </View>
