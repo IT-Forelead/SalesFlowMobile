@@ -8,42 +8,41 @@ import {
   Text,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {addProduct} from '../lib/products';
+import {addProductBarcode} from '../lib/products';
 import {
-  ProductAddData,
-  ProductAddForm,
-  ProductAdd as ProductAddType,
+  ProductBarcodeAddForm,
+  ProductBarcodeAdd as ProductBarcodeAddType,
 } from '../models/products';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import SegmentedButtons from '../components/SegmentedButtons';
 import {storage} from '../lib/storage';
 
-type ProductAddProps = {
-  productAddData: ProductAddData;
-  onProductAdded: () => void;
+type BarcodeAddProps = {
+  barcode: number;
+  onAdded: () => void;
 };
 
-export default function ProductAdd({
-  productAddData,
-  onProductAdded,
-}: ProductAddProps): React.JSX.Element {
-  const [product, setProduct] = useState<ProductAddForm>(productAddData);
+export default function BarcodeAdd({
+  barcode,
+  onAdded,
+}: BarcodeAddProps): React.JSX.Element {
+  const [product, setProduct] = useState<ProductBarcodeAddForm>({
+    barcode: barcode,
+  });
   const [adding, setAdding] = useState<boolean>(false);
 
   function sendData() {
     setAdding(true);
-    const data: ProductAddType = {
+    const data: ProductBarcodeAddType = {
       barcode: product.barcode!,
-      name: product.name!,
+      trademark: product.trademark!,
       packaging: product.packaging!,
-      price: product.price!,
-      quantity: product.quantity!,
-      saleType: product.saleType!,
+      saleType: product.saleType,
     };
 
-    addProduct(data).then(() => {
-      onProductAdded();
+    addProductBarcode(data).then(() => {
+      onAdded();
     });
   }
 
@@ -62,7 +61,7 @@ export default function ProductAdd({
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
         <ScrollView>
           <Text className=" text-gray-900 dark:text-gray-200 text-5xl text-center mb-5">
-            Add Product
+            Add Barcode
           </Text>
 
           <Input
@@ -73,11 +72,11 @@ export default function ProductAdd({
           />
 
           <Input
-            title="Name"
-            placeholder="Name of product"
+            title="Trademark"
+            placeholder="Trademark of product"
             enterKeyHint="next"
-            defaultValue={product.name}
-            onChangeText={value => setProduct({...product, name: value})}
+            defaultValue={product.trademark}
+            onChangeText={value => setProduct({...product, trademark: value})}
           />
 
           <Input
@@ -88,31 +87,18 @@ export default function ProductAdd({
             onChangeText={value => setProduct({...product, packaging: value})}
           />
 
-          <Input
-            title="Quantity"
-            placeholder="Quantity of product"
-            enterKeyHint="next"
-            keyboardType="numeric"
-            defaultValue={product.quantity ? product.quantity.toString() : ''}
-            onChangeText={value => setProduct({...product, quantity: +value})}
-          />
-
-          <Input
-            title="Price"
-            placeholder="Price of product"
-            enterKeyHint="done"
-            keyboardType="numeric"
-            defaultValue={product.price ? product.price.toString() : ''}
-            onChangeText={value => setProduct({...product, price: +value})}
-          />
-
           <SegmentedButtons
             values={saleTypes}
             selected={product.saleType}
             onSelect={value => setProduct({...product, saleType: value})}
           />
 
-          <Button title="Add product" onPress={sendData} disabled={adding} />
+          <Button
+            title="Add product barcode"
+            onPress={sendData}
+            disabled={adding}
+            loading={adding}
+          />
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>

@@ -38,3 +38,22 @@ export type ProductAddData = {
   name?: string;
   packaging?: string;
 };
+
+export type ProductBarcodeAdd = {
+  barcode: number;
+  trademark: string;
+  packaging: string;
+  saleType?: SaleType;
+};
+
+export type ProductBarcodeAddForm = {
+  barcode: number;
+  trademark?: string;
+  packaging?: string;
+  saleType?: SaleType;
+};
+
+export type Stats = {
+  products: number;
+  barcodes: number;
+};
