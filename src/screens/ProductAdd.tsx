@@ -1,6 +1,13 @@
 import React from 'react';
 import {useState} from 'react';
-import {ScrollView, Text} from 'react-native';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {addProduct} from '../lib/products';
 import {
   ProductAddData,
@@ -48,59 +55,65 @@ export default function ProductAdd({
   ];
 
   return (
-    <ScrollView className="pt-24 px-4">
-      <Text className=" text-gray-900 dark:text-gray-200 text-5xl text-center mb-5">
-        Add Product
-      </Text>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      className="pt-24 px-4">
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
+        <ScrollView>
+          <Text className=" text-gray-900 dark:text-gray-200 text-5xl text-center mb-5">
+            Add Product
+          </Text>
 
-      <Input
-        title="Barcode"
-        value={product.barcode?.toString()}
-        editable={false}
-        className="text-gray-400"
-      />
+          <Input
+            title="Barcode"
+            value={product.barcode?.toString()}
+            editable={false}
+            className="text-gray-400"
+          />
 
-      <Input
-        title="Name"
-        placeholder="Name of product"
-        enterKeyHint="next"
-        defaultValue={product.name}
-        onChangeText={value => setProduct({...product, name: value})}
-      />
+          <Input
+            title="Name"
+            placeholder="Name of product"
+            enterKeyHint="next"
+            defaultValue={product.name}
+            onChangeText={value => setProduct({...product, name: value})}
+          />
 
-      <Input
-        title="Packaging"
-        placeholder="Packaging of product"
-        enterKeyHint="next"
-        defaultValue={product.packaging}
-        onChangeText={value => setProduct({...product, packaging: value})}
-      />
+          <Input
+            title="Packaging"
+            placeholder="Packaging of product"
+            enterKeyHint="next"
+            defaultValue={product.packaging}
+            onChangeText={value => setProduct({...product, packaging: value})}
+          />
 
-      <Input
-        title="Quantity"
-        placeholder="Quantity of product"
-        enterKeyHint="next"
-        keyboardType="numeric"
-        defaultValue={product.quantity ? product.quantity.toString() : ''}
-        onChangeText={value => setProduct({...product, quantity: +value})}
-      />
+          <Input
+            title="Quantity"
+            placeholder="Quantity of product"
+            enterKeyHint="next"
+            keyboardType="numeric"
+            defaultValue={product.quantity ? product.quantity.toString() : ''}
+            onChangeText={value => setProduct({...product, quantity: +value})}
+          />
 
-      <Input
-        title="Price"
-        placeholder="Price of product"
-        enterKeyHint="done"
-        keyboardType="numeric"
-        defaultValue={product.price ? product.price.toString() : ''}
-        onChangeText={value => setProduct({...product, price: +value})}
-      />
+          <Input
+            title="Price"
+            placeholder="Price of product"
+            enterKeyHint="done"
+            keyboardType="numeric"
+            defaultValue={product.price ? product.price.toString() : ''}
+            onChangeText={value => setProduct({...product, price: +value})}
+          />
 
-      <SegmentedButtons
-        values={saleTypes}
-        selected={product.saleType}
-        onSelect={value => setProduct({...product, saleType: value})}
-      />
+          <SegmentedButtons
+            values={saleTypes}
+            selected={product.saleType}
+            onSelect={value => setProduct({...product, saleType: value})}
+          />
 
-      <Button title="Add product" onPress={sendData} disabled={adding} />
-    </ScrollView>
+          <Button title="Add product" onPress={sendData} disabled={adding} />
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
