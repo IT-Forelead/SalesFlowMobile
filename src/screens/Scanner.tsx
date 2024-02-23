@@ -1,10 +1,8 @@
-// TODO: updated inline styles
-/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import {useEffect, useState} from 'react';
-import {StyleSheet, Text, useWindowDimensions, View} from 'react-native';
+import {StyleSheet, Text, View, useWindowDimensions} from 'react-native';
+import {Polygon, Rect, Svg} from 'react-native-svg';
 import {ReactNativeScannerView} from '@pushpendersingh/react-native-scanner';
-import {Svg, Polygon, Rect} from 'react-native-svg';
 import {checkCameraPermission} from '../lib/camera';
 import {validateBarcode} from '../lib/products';
 
@@ -18,7 +16,7 @@ export default function Scanner({onScanned}: ScannerProps): React.JSX.Element {
     if (validateBarcode(barcode)) {
       onScanned(barcode);
     } else {
-      // TODO: remove debugger
+      // TODO: warn user about invalid scan
       console.warn('invalid scan');
     }
   }
@@ -35,7 +33,7 @@ export default function Scanner({onScanned}: ScannerProps): React.JSX.Element {
 
   if (isCameraPermissionGranted) {
     return (
-      <View style={{flex: 1}}>
+      <View className="flex">
         <ReactNativeScannerView
           style={{height, width}}
           onQrScanned={onQrScanned}
@@ -70,10 +68,12 @@ export default function Scanner({onScanned}: ScannerProps): React.JSX.Element {
     );
   } else {
     return (
-      // TODO: add better permission needed
-      <Text style={{fontSize: 24, color: 'red'}}>
-        You need to grant camera permission first
-      </Text>
+      // TODO: improve permission needed
+      <View className="flex items-center justify-center h-full px-5">
+        <Text className="text-3xl text-red-500 text-center">
+          You need to grant camera permission first!
+        </Text>
+      </View>
     );
   }
 }

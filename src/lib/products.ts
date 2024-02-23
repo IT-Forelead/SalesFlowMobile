@@ -17,10 +17,9 @@ export async function getByBarcode(
     if (res.status === 200) {
       return res.data;
     } else if (res.status === 404) {
-      // console.log('error on request', res);
-      console.log('deleting tokens');
       storage.delete('access_token');
       storage.delete('refresh_token');
+      storage.delete('authed_on');
     }
   } catch (error) {
     console.log('error occurred', error);

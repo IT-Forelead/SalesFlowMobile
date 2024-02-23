@@ -1,14 +1,14 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
-import {BackHandler, SafeAreaView, StyleSheet, Text} from 'react-native';
-import Login from './components/Login';
-import Scanner from './components/Scanner';
-import ProductAdd from './components/ProductAdd';
+import {BackHandler, SafeAreaView, Text} from 'react-native';
+import Loading from './screens/Loading';
+import Login from './screens/Login';
+import ProductAdd from './screens/ProductAdd';
+import Scanner from './screens/Scanner';
+import Success from './screens/Success';
+import {check as check_auth} from './lib/auth';
 import {getByBarcode} from './lib/products';
 import {ProductAddData} from './models/products';
-import Loading from './components/Loading';
-import {check as check_auth} from './lib/auth';
-import Success from './components/Success';
 
 type Page = 'loading' | 'login' | 'scanner' | 'product-add' | 'success';
 
@@ -58,11 +58,11 @@ export default function App(): React.JSX.Element {
   }
 
   return (
-    <SafeAreaView style={styles.view}>
+    <SafeAreaView className="min-h-full bg-white dark:bg-gray-950">
       {page === 'loading' ? (
         <Loading />
       ) : page === 'success' ? (
-        <Success onClick={() => setPage('scanner')} />
+        <Success button={{title: 'Scan', onClick: () => setPage('scanner')}} />
       ) : page === 'login' ? (
         <Login setLoggedIn={() => setPage('scanner')} />
       ) : page === 'scanner' ? (
@@ -73,14 +73,8 @@ export default function App(): React.JSX.Element {
           onProductAdded={onProductAdded}
         />
       ) : (
-        <Text>Unknown page</Text>
+        <Text className="text-gray-900 dark:text-white">Unknown page</Text>
       )}
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  view: {
-    height: '100%',
-  },
-});

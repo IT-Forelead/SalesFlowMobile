@@ -18,16 +18,13 @@ export async function login(
   data: LoginData,
   setLoggedIn: (value: boolean) => void,
 ) {
-  console.log('logging in with credentials...', data); // TODO: remove debugger
   const res = await publicAxiosClient.post<AuthTokens>('/auth/login', data);
   if (res.status === 200) {
-    console.log('successfully logged in'); // TODO: remove debugger
     storage.set('access_token', res.data.accessToken);
     storage.set('refresh_token', res.data.refreshToken);
     storage.set('authed_on', new Date().toISOString());
     setLoggedIn(true);
   } else {
-    console.log('error occured during login process'); // TODO: remove debugger
     setLoggedIn(false);
   }
 }
