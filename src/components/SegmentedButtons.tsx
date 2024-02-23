@@ -13,7 +13,7 @@ interface SegmentedButtonsProps {
     key: string;
     label: string;
   }[];
-  onSelect: (arg0: string) => void;
+  onSelect: (value: string) => void;
   selected: string | undefined;
 }
 
@@ -34,15 +34,13 @@ function Segment(props: SegmentProps): React.JSX.Element {
 export default function SegmentedButtons(
   props: SegmentedButtonsProps,
 ): React.JSX.Element {
-  const keys = props.values.map(value => value.key);
-  const [checked, setChecked] = useState<(typeof keys)[number] | undefined>();
   return (
     <View className="flex flex-row justify-evenly my-4 divide-x border border-blue-500 rounded-full overflow-hidden">
       {props.values.map(value => (
         <Segment
           title={value.label}
-          checked={checked === value.key}
-          onPress={() => setChecked(value.key)}
+          checked={props.selected === value.key}
+          onPress={() => props.onSelect(value.key)}
           key={value.key}
         />
       ))}

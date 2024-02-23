@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {useState} from 'react';
 import {Pressable, Text, View, useColorScheme} from 'react-native';
 import {Path, Svg} from 'react-native-svg';
@@ -48,7 +48,9 @@ function Card(props: CardProps): React.JSX.Element {
 export default function Home(props: HomeProps): React.JSX.Element {
   const [stats, setStats] = useState<Stats>();
 
-  getStats().then(setStats);
+  useEffect(() => {
+    getStats().then(setStats);
+  }, []);
 
   const user = getUser();
 
