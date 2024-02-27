@@ -1,5 +1,4 @@
-import React, { useEffect } from 'react';
-import {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Pressable, Text, View, useColorScheme} from 'react-native';
 import {Path, Svg} from 'react-native-svg';
 import {getStats} from '../lib/products';
@@ -23,7 +22,8 @@ function Card(props: CardProps): React.JSX.Element {
     <View className="bg-blue-100/50 dark:bg-gray-800 rounded-lg py-4 px-6 my-2">
       <Text className="dark:text-white text-2xl">{props.title}</Text>
       <View className="flex flex-row justify-between mt-4">
-        <Text className="dark:text-white text-4xl">{props.count}</Text>
+        {/* DO NOT REMOVE THE SPACE AFTER COUNT!!! IT IS HERE FOR A REASON. */}
+        <Text className="dark:text-white text-4xl">{props.count} </Text>
         <Pressable
           className="bg-gray-200 dark:bg-gray-700 p-1 rounded-full"
           onPress={props.onClick}>
