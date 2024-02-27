@@ -15,6 +15,27 @@ export type ProductBarcode = {
   createdAt: string;
 };
 
+export type ProductFilter = {
+  barcode?: number;
+  name?: string;
+  productIds?: string[];
+  minCount?: number;
+  limit?: number;
+  page?: number;
+};
+
+export type Product = {
+  id: string;
+  createdAt: string;
+  marketId: string;
+  barcode: number;
+  name: string;
+  saleType: SaleType;
+  packaging: string;
+  price: number;
+  quantity: number;
+};
+
 export type ProductAdd = {
   barcode: number;
   name: string;
@@ -25,12 +46,12 @@ export type ProductAdd = {
 };
 
 export type ProductAddForm = {
-  barcode?: number;
-  name?: string;
-  saleType?: SaleType;
-  packaging?: string;
-  price?: number;
-  quantity?: number;
+  barcode: string;
+  name: string;
+  saleType: SaleType;
+  packaging: string;
+  price: string;
+  quantity: string;
 };
 
 export type ProductAddData = {
@@ -47,13 +68,18 @@ export type ProductBarcodeAdd = {
 };
 
 export type ProductBarcodeAddForm = {
-  barcode: number;
-  trademark?: string;
-  packaging?: string;
+  barcode: string;
+  trademark: string;
+  packaging: string;
   saleType?: SaleType;
 };
 
 export type Stats = {
   products: number;
   barcodes: number;
+};
+
+export type PaginatedResponse<A> = {
+  data: A[];
+  total: number;
 };

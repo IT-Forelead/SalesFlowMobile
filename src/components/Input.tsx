@@ -4,6 +4,8 @@ import {Text, TextInput, TextInputProps, View} from 'react-native';
 
 interface InputProps extends TextInputProps {
   title: string;
+  required?: boolean;
+  errorMessage?: string;
 }
 
 export default function Input(props: InputProps): React.JSX.Element {
@@ -11,6 +13,7 @@ export default function Input(props: InputProps): React.JSX.Element {
     <View className="my-2">
       <Text className="mb-2 block text-base font-semibold text-gray-900 dark:text-gray-200">
         {props.title}
+        {props.required ? <Text className="text-red-600"> *</Text> : null}
       </Text>
       <TextInput
         {...props}
@@ -19,6 +22,7 @@ export default function Input(props: InputProps): React.JSX.Element {
           props.className,
         )}
       />
+      <Text className="text-red-600 text-sm">{props.errorMessage}</Text>
     </View>
   );
 }

@@ -1,7 +1,10 @@
 import {
+  PaginatedResponse,
+  Product,
   ProductAdd,
   ProductBarcode,
   ProductBarcodeAdd,
+  ProductFilter,
   Stats,
 } from '../models/products';
 import axiosClient from '../services/axios';
@@ -31,6 +34,16 @@ export async function getByBarcode(
   }
 }
 
+export async function getProductBarcodes(limit: number = 1, page: number = 1) {
+  return await axiosClient.get<PaginatedResponse<ProductBarcode>>(
+    `/product/barcodes?limit=${limit}&page=${page}`,
+  );
+}
+
+export async function getProducts(filter: ProductFilter) {
+  return await axiosClient.post<PaginatedResponse<Product>>('/product', filter);
+}
+
 export async function addProduct(data: ProductAdd) {
   return await axiosClient.post('/product/add', data);
 }
@@ -45,18 +58,12 @@ export async function getStats(): Promise<Stats> {
     typeCount: number;
     quantity: number;
   };
-  type BarcodesType = {
-    data: [];
-    total: number;
-  };
 
   const stats = await axiosClient.get<StatsType>('/product/stats');
-  const barcodes = await axiosClient.get<BarcodesType>(
-    '/product/barcodes?limit=1&page=1',
-  );
+  const barcodes = await getProductBarcodes();
 
   return {
-    products: stats.data.quantity,
+    products: stats.data.typeCount,
     barcodes: barcodes.data.total,
   };
 }

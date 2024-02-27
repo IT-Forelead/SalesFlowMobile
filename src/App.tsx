@@ -1,6 +1,6 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
-import {BackHandler, SafeAreaView, Text} from 'react-native';
+import {Alert, BackHandler, SafeAreaView, Text} from 'react-native';
 import BarcodeAdd from './screens/BarcodeAdd';
 import Loading from './screens/Loading';
 import Login from './screens/Login';
@@ -9,7 +9,7 @@ import ProductAdd from './screens/ProductAdd';
 import Scanner from './screens/Scanner';
 import Success from './screens/Success';
 import {check as check_auth} from './lib/auth';
-import {getByBarcode} from './lib/products';
+import {getByBarcode, getProducts} from './lib/products';
 import {ProductAddData} from './models/products';
 
 type Page =
@@ -48,8 +48,6 @@ export default function App(): React.JSX.Element {
   }, [page]);
 
   function onScanned(value: string) {
-    // TODO: remove debugger
-    console.log('scanned. data is', value);
     setPage('loading');
     if (scanNext === 'add_product') {
       getByBarcode(value)
@@ -61,12 +59,24 @@ export default function App(): React.JSX.Element {
                 packaging: data.packaging,
               })
             : setProductAddData({barcode: +value});
+          getProducts({barcode: +value}).then(response => {
+            if (response.data.total > 0) {
+              Alert.alert('Error', 'Already added', undefined, {
+                cancelable: true,
+              });
+            }
+          });
           setPage('product-add');
         })
         .catch(() => {
           console.log('rejected');
         });
     } else if (scanNext === 'add_barcode') {
+      getByBarcode(value).then(response => {
+        if (response) {
+          Alert.alert('Error', 'Already added', undefined, {cancelable: true});
+        }
+      });
       setProductAddData({barcode: +value});
       setPage('barcode-add');
     }

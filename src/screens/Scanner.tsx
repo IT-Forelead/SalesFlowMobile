@@ -1,6 +1,12 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, useWindowDimensions} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  Vibration,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import {Polygon, Rect, Svg} from 'react-native-svg';
 import {ReactNativeScannerView} from '@pushpendersingh/react-native-scanner';
 import {checkCameraPermission} from '../lib/camera';
@@ -16,8 +22,7 @@ export default function Scanner({onScanned}: ScannerProps): React.JSX.Element {
     if (validateBarcode(barcode)) {
       onScanned(barcode);
     } else {
-      // TODO: warn user about invalid scan
-      console.warn('invalid scan');
+      Vibration.vibrate(1);
     }
   }
 
@@ -36,7 +41,10 @@ export default function Scanner({onScanned}: ScannerProps): React.JSX.Element {
       <View className="flex">
         <ReactNativeScannerView
           style={{height, width}}
-          onQrScanned={onQrScanned}
+          onQrScanned={event => {
+            console.log('scannned', event.nativeEvent.value);
+            onQrScanned(event);
+          }}
         />
         <Svg width={width} height={height} style={StyleSheet.absoluteFill}>
           <Polygon
@@ -68,7 +76,6 @@ export default function Scanner({onScanned}: ScannerProps): React.JSX.Element {
     );
   } else {
     return (
-      // TODO: improve permission needed
       <View className="flex items-center justify-center h-full px-5">
         <Text className="text-3xl text-red-500 text-center">
           You need to grant camera permission first!

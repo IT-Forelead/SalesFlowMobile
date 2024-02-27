@@ -1,6 +1,7 @@
 import React from 'react';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -17,34 +18,91 @@ import {
 import Button from '../components/Button';
 import Input from '../components/Input';
 import SegmentedButtons from '../components/SegmentedButtons';
-import {storage} from '../lib/storage';
 
 type ProductAddProps = {
   productAddData: ProductAddData;
   onProductAdded: () => void;
 };
 
+type FormErrors = {
+  barcode?: string;
+  name?: string;
+  packaging?: string;
+  quantity?: string;
+  price?: string;
+  saleType?: string;
+};
+
 export default function ProductAdd({
   productAddData,
   onProductAdded,
 }: ProductAddProps): React.JSX.Element {
-  const [product, setProduct] = useState<ProductAddForm>(productAddData);
+  const [product, setProduct] = useState<ProductAddForm>({
+    // ...productAddData,
+    barcode: productAddData.barcode?.toString() ?? '',
+    name: productAddData.name ?? '',
+    packaging: '',
+    quantity: '',
+    price: '',
+    saleType: '',
+  });
   const [adding, setAdding] = useState<boolean>(false);
+  const [formValidity, setFormValidity] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+
+  useEffect(() => {
+    const errors_: FormErrors = {};
+    let valid_ = true;
+
+    if (+product.barcode < 80000000) {
+      errors_.barcode = 'Invalid barcode';
+      valid_ = false;
+    }
+    if (product.name.length < 1) {
+      errors_.name = 'Invalid';
+      valid_ = false;
+    }
+    if (product.packaging.length < 1) {
+      errors_.packaging = 'Invalid';
+      valid_ = false;
+    }
+    if (isNaN(+product.quantity) || +product.quantity < 1) {
+      errors_.quantity = 'Invalid';
+      valid_ = false;
+    }
+    if (isNaN(+product.price) || +product.price < 1) {
+      errors_.price = 'Invalid';
+      valid_ = false;
+    }
+    if (product.saleType === '') {
+      errors_.saleType = 'Invalid';
+      valid_ = false;
+    }
+    setFormValidity(valid_);
+    setErrors(errors_);
+  }, [product]);
 
   function sendData() {
     setAdding(true);
     const data: ProductAddType = {
-      barcode: product.barcode!,
-      name: product.name!,
-      packaging: product.packaging!,
-      price: product.price!,
-      quantity: product.quantity!,
-      saleType: product.saleType!,
+      barcode: +product.barcode,
+      name: product.name,
+      packaging: product.packaging,
+      price: +product.price,
+      quantity: +product.quantity,
+      saleType: product.saleType,
     };
 
-    addProduct(data).then(() => {
-      onProductAdded();
-    });
+    addProduct(data)
+      .then(() => {
+        onProductAdded();
+      })
+      .catch(error => {
+        setAdding(false);
+        Alert.alert('Error', error.response.data, undefined, {
+          cancelable: true,
+        });
+      });
   }
 
   const saleTypes = [
@@ -67,9 +125,13 @@ export default function ProductAdd({
 
           <Input
             title="Barcode"
-            value={product.barcode?.toString()}
+            value={product.barcode}
+            onChangeText={value => setProduct({...product, barcode: value})}
             editable={false}
+            keyboardType="numeric"
             className="text-gray-400"
+            required
+            errorMessage={errors.barcode}
           />
 
           <Input
@@ -78,6 +140,8 @@ export default function ProductAdd({
             enterKeyHint="next"
             defaultValue={product.name}
             onChangeText={value => setProduct({...product, name: value})}
+            required
+            errorMessage={errors.name}
           />
 
           <Input
@@ -86,6 +150,8 @@ export default function ProductAdd({
             enterKeyHint="next"
             defaultValue={product.packaging}
             onChangeText={value => setProduct({...product, packaging: value})}
+            required
+            errorMessage={errors.packaging}
           />
 
           <Input
@@ -94,7 +160,9 @@ export default function ProductAdd({
             enterKeyHint="next"
             keyboardType="numeric"
             defaultValue={product.quantity ? product.quantity.toString() : ''}
-            onChangeText={value => setProduct({...product, quantity: +value})}
+            onChangeText={value => setProduct({...product, quantity: value})}
+            required
+            errorMessage={errors.quantity}
           />
 
           <Input
@@ -103,7 +171,9 @@ export default function ProductAdd({
             enterKeyHint="done"
             keyboardType="numeric"
             defaultValue={product.price ? product.price.toString() : ''}
-            onChangeText={value => setProduct({...product, price: +value})}
+            onChangeText={value => setProduct({...product, price: value})}
+            required
+            errorMessage={errors.price}
           />
 
           <SegmentedButtons
@@ -112,7 +182,12 @@ export default function ProductAdd({
             onSelect={value => setProduct({...product, saleType: value})}
           />
 
-          <Button title="Add product" onPress={sendData} disabled={adding} />
+          <Button
+            title="Add product"
+            onPress={sendData}
+            disabled={adding || !formValidity}
+            loading={adding}
+          />
         </ScrollView>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
