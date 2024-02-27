@@ -8,7 +8,7 @@ import Home from './screens/Home';
 import ProductAdd from './screens/ProductAdd';
 import Scanner from './screens/Scanner';
 import Success from './screens/Success';
-import {check as check_auth} from './lib/auth';
+import {check as check_auth, logout} from './lib/auth';
 import {getByBarcode, getProducts} from './lib/products';
 import {ProductAddData} from './models/products';
 
@@ -91,6 +91,29 @@ export default function App(): React.JSX.Element {
     setPage('scanner');
   }
 
+  function onLogout() {
+    Alert.alert(
+      'Confirm',
+      'Do you want to logout?',
+      [
+        {
+          text: 'Logout',
+          onPress: () => {
+            logout().finally(() => {
+              setPage('login');
+            });
+          },
+          style: 'destructive',
+        },
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+      ],
+      {cancelable: true},
+    );
+  }
+
   return (
     <SafeAreaView className="min-h-full bg-white dark:bg-gray-950">
       {page === 'loading' ? (
@@ -100,7 +123,7 @@ export default function App(): React.JSX.Element {
       ) : page === 'login' ? (
         <Login setLoggedIn={() => setPage('home')} />
       ) : page === 'home' ? (
-        <Home onPageSelect={onPageSelect} />
+        <Home onPageSelect={onPageSelect} onLogout={onLogout} />
       ) : page === 'scanner' ? (
         <Scanner onScanned={onScanned} />
       ) : page === 'product-add' ? (

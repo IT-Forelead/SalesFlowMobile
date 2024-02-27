@@ -1,5 +1,5 @@
 import {AuthTokens, LoginData} from '../models/auth';
-import {publicAxiosClient} from '../services/axios';
+import axiosClient, {publicAxiosClient} from '../services/axios';
 import {storage} from './storage';
 
 export function check() {
@@ -56,4 +56,11 @@ export async function refreshToken() {
       // TODO: redirect the user to the login
     }
   }
+}
+
+export async function logout() {
+  await axiosClient.get('/auth/logout');
+  storage.delete('access_token');
+  storage.delete('refresh_token');
+  storage.delete('authed_on');
 }

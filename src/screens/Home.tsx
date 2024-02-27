@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Pressable, Text, View, useColorScheme} from 'react-native';
 import {Path, Svg} from 'react-native-svg';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import {getStats} from '../lib/products';
 import {getUser} from '../lib/user';
 import {Stats} from '../models/products';
@@ -13,6 +14,7 @@ type CardProps = {
 
 type HomeProps = {
   onPageSelect: (value: string) => void;
+  onLogout?: () => void;
 };
 
 function Card(props: CardProps): React.JSX.Element {
@@ -56,9 +58,18 @@ export default function Home(props: HomeProps): React.JSX.Element {
 
   return (
     <View className="p-4 min-h-full">
-      <Text className="text-2xl dark:text-white m-4">
-        {user?.firstname} {user?.lastname}
-      </Text>
+      <View className="flex flex-row justify-between my-4">
+        <Text className="text-2xl dark:text-white">
+          {user?.firstname} {user?.lastname}
+        </Text>
+        {props.onLogout ? (
+          <Pressable className="p-1" onPress={props.onLogout}>
+            <Text className="text-gray-500 dark:text-gray-400">
+              <Icon name="logout" size={24} />
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
       {user?.privileges.includes('create_product') ? (
         <Card
           title="Products"
