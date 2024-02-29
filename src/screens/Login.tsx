@@ -2,7 +2,6 @@ import React from 'react';
 import {useState} from 'react';
 import {Text, View} from 'react-native';
 import {login} from '../lib/auth';
-import {LoginData} from '../models/auth';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
@@ -11,10 +10,8 @@ type LoginProps = {
 };
 
 export default function Login({setLoggedIn}: LoginProps): React.JSX.Element {
-  const [loginData, setLoginData] = useState<LoginData>({
-    password: '',
-    login: '',
-  });
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
 
   return (
     <View className="pt-40 px-4">
@@ -28,9 +25,8 @@ export default function Login({setLoggedIn}: LoginProps): React.JSX.Element {
         enterKeyHint="next"
         autoCapitalize="none"
         autoComplete="username"
-        onChangeText={value => {
-          setLoginData({login: value, password: loginData?.password});
-        }}
+        onChangeText={setUsername}
+        value={username}
         className="mb-2"
       />
 
@@ -39,14 +35,18 @@ export default function Login({setLoggedIn}: LoginProps): React.JSX.Element {
         placeholder="Enter your password"
         enterKeyHint="enter"
         autoComplete="password"
-        onChangeText={value => {
-          setLoginData({login: loginData?.login, password: value});
-        }}
+        onChangeText={setPassword}
+        value={password}
         className="mb-2"
         secureTextEntry
       />
 
-      <Button title="Login" onPress={() => login(loginData, setLoggedIn)} />
+      <Button
+        title="Login"
+        onPress={() =>
+          login({login: username, password: password}, setLoggedIn)
+        }
+      />
     </View>
   );
 }
