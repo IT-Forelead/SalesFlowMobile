@@ -31,9 +31,7 @@ export default function Input(props: InputProps): React.JSX.Element {
           <Pressable
             className="py-1 absolute top-[7px] right-1 w-8"
             onPress={props.onIconClick}>
-            <Text className="text-gray-500 dark:text-gray-400 text-center">
-              {props.icon}
-            </Text>
+            {props.icon}
           </Pressable>
         ) : null}
       </View>

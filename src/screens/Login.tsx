@@ -1,3 +1,4 @@
+import {EyeIcon, EyeOffIcon} from 'lucide-react-native';
 import React from 'react';
 import {useState} from 'react';
 import {
@@ -9,7 +10,6 @@ import {
   Text,
   TouchableWithoutFeedback,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import {login} from '@/lib/auth';
@@ -75,10 +75,11 @@ export default function Login({onLoggedIn}: LoginProps): React.JSX.Element {
             className="mb-2"
             secureTextEntry={passwordHidden}
             icon={
-              <Icon
-                name={passwordHidden ? 'eye-outline' : 'eye-off-outline'}
-                size={24}
-              />
+              passwordHidden ? (
+                <EyeIcon className="text-gray-400" size={24} />
+              ) : (
+                <EyeOffIcon className="text-gray-400" size={24} />
+              )
             }
             onIconClick={() => setPasswordHidden(!passwordHidden)}
           />

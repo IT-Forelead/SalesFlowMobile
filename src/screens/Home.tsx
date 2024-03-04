@@ -1,7 +1,6 @@
+import {LogOutIcon, PlusIcon} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
-import {Pressable, Text, View, useColorScheme} from 'react-native';
-import {Path, Svg} from 'react-native-svg';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Pressable, Text, View} from 'react-native';
 import {getStats} from '@/lib/products';
 import {getUser} from '@/lib/user';
 import {Stats} from '@/models/products';
@@ -18,8 +17,6 @@ type HomeProps = {
 };
 
 function Card(props: CardProps): React.JSX.Element {
-  const colorScheme = useColorScheme();
-
   return (
     <View className="bg-blue-100/50 dark:bg-gray-800 rounded-lg py-4 px-6 my-2">
       <Text className="dark:text-white text-2xl">{props.title}</Text>
@@ -29,18 +26,7 @@ function Card(props: CardProps): React.JSX.Element {
         <Pressable
           className="bg-gray-200 dark:bg-gray-700 p-1 rounded-full"
           onPress={props.onClick}>
-          <Svg
-            width="32"
-            height="32"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={colorScheme === 'dark' ? '#9ca3af' : '#6b7280'}
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round">
-            <Path d="M5 12h14" />
-            <Path d="M12 5v14" />
-          </Svg>
+          <PlusIcon className="text-gray-400" strokeWidth={1} size={32} />
         </Pressable>
       </View>
     </View>
@@ -64,9 +50,7 @@ export default function Home(props: HomeProps): React.JSX.Element {
         </Text>
         {props.onLogout ? (
           <Pressable className="p-1" onPress={props.onLogout}>
-            <Text className="text-gray-500 dark:text-gray-400">
-              <Icon name="logout" size={24} />
-            </Text>
+            <LogOutIcon className="text-gray-400" />
           </Pressable>
         ) : null}
       </View>
