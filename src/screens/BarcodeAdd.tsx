@@ -9,14 +9,14 @@ import {
   Text,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {addProductBarcode} from '../lib/products';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import SegmentedButtons from '@/components/SegmentedButtons';
+import {addProductBarcode} from '@/lib/products';
 import {
   ProductBarcodeAddForm,
   ProductBarcodeAdd as ProductBarcodeAddType,
-} from '../models/products';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import SegmentedButtons from '../components/SegmentedButtons';
+} from '@/models/products';
 
 type BarcodeAddProps = {
   barcode: number;

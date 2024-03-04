@@ -9,15 +9,15 @@ import {
   Text,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {addProduct} from '../lib/products';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import SegmentedButtons from '@/components/SegmentedButtons';
+import {addProduct} from '@/lib/products';
 import {
   ProductAddData,
   ProductAddForm,
   ProductAdd as ProductAddType,
-} from '../models/products';
-import Button from '../components/Button';
-import Input from '../components/Input';
-import SegmentedButtons from '../components/SegmentedButtons';
+} from '@/models/products';
 
 type ProductAddProps = {
   productAddData: ProductAddData;

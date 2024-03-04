@@ -1,7 +1,7 @@
 import {decode} from 'base-64';
 import {jwtDecode} from 'jwt-decode';
-import {JwtData} from '../models/auth';
-import {storage} from './storage';
+import {JwtData} from '@/models/auth';
+import {storage} from '@/lib/storage';
 
 export function getUser() {
   global.atob = decode;

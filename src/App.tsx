@@ -1,16 +1,16 @@
 import React from 'react';
 import {useEffect, useState} from 'react';
 import {Alert, BackHandler, SafeAreaView, Text} from 'react-native';
-import BarcodeAdd from './screens/BarcodeAdd';
-import Loading from './screens/Loading';
-import Login from './screens/Login';
-import Home from './screens/Home';
-import ProductAdd from './screens/ProductAdd';
-import Scanner from './screens/Scanner';
-import Success from './screens/Success';
-import {check as check_auth, logout} from './lib/auth';
-import {getByBarcode, getProducts} from './lib/products';
-import {ProductAddData} from './models/products';
+import {check as check_auth, logout} from '@/lib/auth';
+import {getByBarcode, getProducts} from '@/lib/products';
+import {ProductAddData} from '@/models/products';
+import BarcodeAdd from '@/screens/BarcodeAdd';
+import Loading from '@/screens/Loading';
+import Login from '@/screens/Login';
+import Home from '@/screens/Home';
+import ProductAdd from '@/screens/ProductAdd';
+import Scanner from '@/screens/Scanner';
+import Success from '@/screens/Success';
 
 type Page =
   | 'loading'

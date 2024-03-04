@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {Pressable, Text, View, useColorScheme} from 'react-native';
 import {Path, Svg} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {getStats} from '../lib/products';
-import {getUser} from '../lib/user';
-import {Stats} from '../models/products';
+import {getStats} from '@/lib/products';
+import {getUser} from '@/lib/user';
+import {Stats} from '@/models/products';
 
 type CardProps = {
   title: string;

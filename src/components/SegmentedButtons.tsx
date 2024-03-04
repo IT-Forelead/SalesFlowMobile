@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import React from 'react';
-import {useState} from 'react';
 import {Pressable, PressableProps, Text, View} from 'react-native';
 
 interface SegmentProps extends PressableProps {

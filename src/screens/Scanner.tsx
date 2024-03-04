@@ -9,8 +9,8 @@ import {
 } from 'react-native';
 import {Polygon, Rect, Svg} from 'react-native-svg';
 import {ReactNativeScannerView} from '@pushpendersingh/react-native-scanner';
-import {checkCameraPermission} from '../lib/camera';
-import {validateBarcode} from '../lib/products';
+import {checkCameraPermission} from '@/lib/camera';
+import {validateBarcode} from '@/lib/products';
 
 type ScannerProps = {
   onScanned: (value: string) => void;

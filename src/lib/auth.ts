@@ -1,6 +1,6 @@
-import {AuthTokens, LoginData} from '../models/auth';
-import axiosClient, {publicAxiosClient} from '../services/axios';
-import {storage} from './storage';
+import {AuthTokens, LoginData} from '@/models/auth';
+import axiosClient, {publicAxiosClient} from '@/services/axios';
+import {storage} from '@/lib/storage';
 
 export function check() {
   const authed_on_str = storage.getString('authed_on');

@@ -6,9 +6,9 @@ import {
   ProductBarcodeAdd,
   ProductFilter,
   Stats,
-} from '../models/products';
-import axiosClient from '../services/axios';
-import {storage} from './storage';
+} from '@/models/products';
+import axiosClient from '@/services/axios';
+import {storage} from '@/lib/storage';
 
 export function validateBarcode(barcode: string): boolean {
   return /^[1-9]\d{7,13}$/.test(barcode);

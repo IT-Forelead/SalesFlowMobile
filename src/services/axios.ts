@@ -1,7 +1,7 @@
 import axios, {AxiosHeaderValue, HeadersDefaults} from 'axios';
 import Config from 'react-native-config';
-import {refreshToken} from '../lib/auth';
-import {storage} from '../lib/storage';
+import {refreshToken} from '@/lib/auth';
+import {storage} from '@/lib/storage';
 
 type Headers = {
   'Content-Type': string;

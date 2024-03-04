@@ -1,9 +1,9 @@
 import React from 'react';
 import {useState} from 'react';
 import {Text, View} from 'react-native';
-import {login} from '../lib/auth';
-import Button from '../components/Button';
-import Input from '../components/Input';
+import Button from '@/components/Button';
+import Input from '@/components/Input';
+import {login} from '@/lib/auth';
 
 type LoginProps = {
   setLoggedIn: (value: boolean) => void;
