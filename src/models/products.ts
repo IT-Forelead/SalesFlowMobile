@@ -37,7 +37,7 @@ export type Product = {
 };
 
 export type ProductAdd = {
-  barcode: number;
+  barcode?: number;
   name: string;
   saleType: SaleType;
   packaging: string;

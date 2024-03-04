@@ -29,7 +29,8 @@ export default function App(): React.JSX.Element {
   useEffect(() => {
     const backAction = () => {
       if (page === 'product-add' || page === 'barcode-add') {
-        setPage('scanner');
+        setProductAddData({});
+        setPage('home');
         return true;
       } else if (page === 'scanner') {
         setPage('home');
@@ -87,8 +88,12 @@ export default function App(): React.JSX.Element {
   }
 
   function onPageSelect(value: string) {
-    setScanNext(value);
-    setPage('scanner');
+    if (value === 'add_product_without_barcode') {
+      setPage('product-add');
+    } else {
+      setScanNext(value);
+      setPage('scanner');
+    }
   }
 
   function onLogout() {

@@ -54,7 +54,7 @@ export default function ProductAdd({
     const errors_: FormErrors = {};
     let valid_ = true;
 
-    if (+product.barcode < 80000000) {
+    if (product.barcode !== '' && +product.barcode < 80000000) {
       errors_.barcode = 'Invalid barcode';
       valid_ = false;
     }
@@ -85,7 +85,7 @@ export default function ProductAdd({
   function sendData() {
     setAdding(true);
     const data: ProductAddType = {
-      barcode: +product.barcode,
+      barcode: product.barcode === '' ? undefined : +product.barcode,
       name: product.name,
       packaging: product.packaging,
       price: +product.price,
@@ -123,16 +123,18 @@ export default function ProductAdd({
             Add Product
           </Text>
 
-          <Input
-            title="Barcode"
-            value={product.barcode}
-            onChangeText={value => setProduct({...product, barcode: value})}
-            editable={false}
-            keyboardType="numeric"
-            className="text-gray-400"
-            required
-            errorMessage={errors.barcode}
-          />
+          {product.barcode !== '' ? (
+            <Input
+              title="Barcode"
+              value={product.barcode}
+              onChangeText={value => setProduct({...product, barcode: value})}
+              editable={false}
+              keyboardType="numeric"
+              className="text-gray-400"
+              required
+              errorMessage={errors.barcode}
+            />
+          ) : null}
 
           <Input
             title="Name"

@@ -1,4 +1,4 @@
-import {LogOutIcon, PlusIcon} from 'lucide-react-native';
+import {LogOutIcon, PlusIcon, ScanBarcodeIcon} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {Pressable, Text, View} from 'react-native';
 import {getStats} from '@/lib/products';
@@ -9,6 +9,8 @@ type CardProps = {
   title: string;
   count: number;
   onClick: () => void;
+  additionalIcon?: React.JSX.Element;
+  onAdditionalClick?: () => void;
 };
 
 type HomeProps = {
@@ -23,11 +25,24 @@ function Card(props: CardProps): React.JSX.Element {
       <View className="flex flex-row justify-between mt-4">
         {/* DO NOT REMOVE THE SPACE AFTER COUNT!!! IT IS HERE FOR A REASON. */}
         <Text className="dark:text-white text-4xl">{props.count} </Text>
-        <Pressable
-          className="bg-gray-200 dark:bg-gray-700 p-1 rounded-full"
-          onPress={props.onClick}>
-          <PlusIcon className="text-gray-400" strokeWidth={1} size={32} />
-        </Pressable>
+        <View className="flex flex-row space-x-3">
+          {props.additionalIcon ? (
+            <Pressable
+              className="bg-gray-200 dark:bg-gray-700 p-1 rounded-full"
+              onPress={props.onAdditionalClick}>
+              {props.additionalIcon}
+            </Pressable>
+          ) : null}
+          <Pressable
+            className="bg-gray-200 dark:bg-gray-700 p-1 rounded-full"
+            onPress={props.onClick}>
+            <ScanBarcodeIcon
+              className="text-gray-400"
+              strokeWidth={1}
+              size={32}
+            />
+          </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -59,6 +74,12 @@ export default function Home(props: HomeProps): React.JSX.Element {
           title="Products"
           count={stats?.products ?? 0}
           onClick={() => props.onPageSelect('add_product')}
+          additionalIcon={
+            <PlusIcon className="text-gray-400" strokeWidth={1} size={32} />
+          }
+          onAdditionalClick={() =>
+            props.onPageSelect('add_product_without_barcode')
+          }
         />
       ) : null}
       {user?.privileges.includes('create_barcode') ? (
