@@ -131,7 +131,7 @@ apply from: file("../../node_modules/@react-native-community/cli-platform-androi
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 project.ext.vectoricons = [
-    iconFontNames: [ 'MaterialIcons.ttf']
+    iconFontNames: [ 'MaterialIcons.ttf', 'MaterialCommunityIcons.ttf' ]
 ]
 
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
