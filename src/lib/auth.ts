@@ -14,19 +14,11 @@ export function check() {
   return false;
 }
 
-export async function login(
-  data: LoginData,
-  setLoggedIn: (value: boolean) => void,
-) {
+export async function login(data: LoginData) {
   const res = await publicAxiosClient.post<AuthTokens>('/auth/login', data);
-  if (res.status === 200) {
-    storage.set('access_token', res.data.accessToken);
-    storage.set('refresh_token', res.data.refreshToken);
-    storage.set('authed_on', new Date().toISOString());
-    setLoggedIn(true);
-  } else {
-    setLoggedIn(false);
-  }
+  storage.set('access_token', res.data.accessToken);
+  storage.set('refresh_token', res.data.refreshToken);
+  storage.set('authed_on', new Date().toISOString());
 }
 
 export async function refreshToken() {

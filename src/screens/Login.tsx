@@ -1,17 +1,37 @@
 import React from 'react';
 import {useState} from 'react';
-import {Text, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import {login} from '@/lib/auth';
 
 type LoginProps = {
-  setLoggedIn: (value: boolean) => void;
+  onLoggedIn: () => void;
 };
 
-export default function Login({setLoggedIn}: LoginProps): React.JSX.Element {
+export default function Login({onLoggedIn}: LoginProps): React.JSX.Element {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  function logIn() {
+    setLoading(true);
+    login({login: username, password: password})
+      .then(() => {
+        onLoggedIn();
+      })
+      .catch(() => {
+        Alert.alert(
+          'Incorrect login details',
+          'Username or password is incorrect',
+          undefined,
+          {cancelable: true},
+        );
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
 
   return (
     <View className="pt-40 px-4">
@@ -34,6 +54,7 @@ export default function Login({setLoggedIn}: LoginProps): React.JSX.Element {
         title="Password"
         placeholder="Enter your password"
         enterKeyHint="enter"
+        autoCapitalize="none"
         autoComplete="password"
         onChangeText={setPassword}
         value={password}
@@ -43,9 +64,9 @@ export default function Login({setLoggedIn}: LoginProps): React.JSX.Element {
 
       <Button
         title="Login"
-        onPress={() =>
-          login({login: username, password: password}, setLoggedIn)
-        }
+        onPress={logIn}
+        loading={loading}
+        disabled={loading || username === '' || password === ''}
       />
     </View>
   );

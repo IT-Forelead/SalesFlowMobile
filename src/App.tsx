@@ -121,7 +121,7 @@ export default function App(): React.JSX.Element {
       ) : page === 'success' ? (
         <Success button={{title: 'Scan', onClick: () => setPage('scanner')}} />
       ) : page === 'login' ? (
-        <Login setLoggedIn={() => setPage('home')} />
+        <Login onLoggedIn={() => setPage('home')} />
       ) : page === 'home' ? (
         <Home onPageSelect={onPageSelect} onLogout={onLogout} />
       ) : page === 'scanner' ? (
