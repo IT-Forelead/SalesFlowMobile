@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import Button from '@/components/Button';
+import Checkbox from '@/components/Checkbox';
 import Input from '@/components/Input';
 import SegmentedButtons from '@/components/SegmentedButtons';
 import {addProduct} from '@/lib/products';
@@ -45,6 +46,7 @@ export default function ProductAdd(props: ProductAddProps): React.JSX.Element {
     quantity: '',
     price: '',
     saleType: '',
+    toLend: false,
   });
   const [adding, setAdding] = useState<boolean>(false);
   const [formValidity, setFormValidity] = useState(false);
@@ -94,6 +96,7 @@ export default function ProductAdd(props: ProductAddProps): React.JSX.Element {
       price: +product.price,
       quantity: +product.quantity,
       saleType: product.saleType,
+      toLend: product.toLend,
     };
 
     addProduct(data)
@@ -225,6 +228,15 @@ export default function ProductAdd(props: ProductAddProps): React.JSX.Element {
             values={saleTypes}
             selected={product.saleType}
             onSelect={value => setProduct({...product, saleType: value})}
+          />
+
+          <Checkbox
+            title="Lend"
+            isChecked={product.toLend}
+            onCheckedChange={checked =>
+              setProduct({...product, toLend: checked})
+            }
+            className="my-2"
           />
 
           <Button

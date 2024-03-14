@@ -43,6 +43,7 @@ export type ProductAdd = {
   packaging: string;
   price: number;
   quantity: number;
+  toLend: boolean;
 };
 
 export type ProductAddForm = {
@@ -52,6 +53,7 @@ export type ProductAddForm = {
   packaging: string;
   price: string;
   quantity: string;
+  toLend: boolean;
 };
 
 export type ProductAddData = {
