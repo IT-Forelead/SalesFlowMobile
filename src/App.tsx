@@ -2,8 +2,8 @@ import React from 'react';
 import {useEffect, useState} from 'react';
 import {Alert, BackHandler, SafeAreaView, Text} from 'react-native';
 import {check as check_auth, logout} from '@/lib/auth';
-import {getByBarcode, getProducts} from '@/lib/products';
-import {ProductAddData} from '@/models/products';
+import {getByBarcode} from '@/lib/products';
+import {ProductAddData, ProductBarcode} from '@/models/products';
 import BarcodeAdd from '@/screens/BarcodeAdd';
 import Loading from '@/screens/Loading';
 import Login from '@/screens/Login';
@@ -25,6 +25,7 @@ export default function App(): React.JSX.Element {
   const [page, setPage] = useState<Page>(check_auth() ? 'home' : 'login');
   const [productAddData, setProductAddData] = useState<ProductAddData>({});
   const [scanNext, setScanNext] = useState<string | undefined>(undefined);
+  const [productBarcodes, setProductBarcodes] = useState<ProductBarcode[]>([]);
 
   useEffect(() => {
     const backAction = () => {
@@ -53,20 +54,7 @@ export default function App(): React.JSX.Element {
     if (scanNext === 'add_product') {
       getByBarcode(value)
         .then(data => {
-          data
-            ? setProductAddData({
-                barcode: data.barcode,
-                name: data.trademark,
-                packaging: data.packaging,
-              })
-            : setProductAddData({barcode: +value});
-          getProducts({barcode: +value}).then(response => {
-            if (response.data.total > 0) {
-              Alert.alert('Error', 'Already added', undefined, {
-                cancelable: true,
-              });
-            }
-          });
+          setProductBarcodes(data);
           setPage('product-add');
         })
         .catch(() => {
@@ -74,7 +62,7 @@ export default function App(): React.JSX.Element {
         });
     } else if (scanNext === 'add_barcode') {
       getByBarcode(value).then(response => {
-        if (response) {
+        if (response.length > 1) {
           Alert.alert('Error', 'Already added', undefined, {cancelable: true});
         }
       });
@@ -89,6 +77,7 @@ export default function App(): React.JSX.Element {
 
   function onPageSelect(value: string) {
     if (value === 'add_product_without_barcode') {
+      setProductBarcodes([]);
       setPage('product-add');
     } else {
       setScanNext(value);
@@ -132,7 +121,11 @@ export default function App(): React.JSX.Element {
       ) : page === 'scanner' ? (
         <Scanner onScanned={onScanned} />
       ) : page === 'product-add' ? (
-        <ProductAdd productAddData={productAddData} onProductAdded={onAdded} />
+        <ProductAdd
+          productBarcodes={productBarcodes}
+          onProductAdded={onAdded}
+          goBack={() => setPage('home')}
+        />
       ) : page === 'barcode-add' ? (
         <BarcodeAdd barcode={productAddData.barcode!} onAdded={onAdded} />
       ) : (
