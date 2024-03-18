@@ -114,6 +114,10 @@ export default function App(): React.JSX.Element {
   }
 
   function orderItemChangeAmount(productId: string, amount: number) {
+    if (amount <= 0) {
+      setOrderProducts(orderProducts.filter(p => p.productId !== productId));
+      return;
+    }
     setOrderProducts(
       orderProducts.map(p => {
         if (p.productId === productId && p.maxAmount > amount) {
@@ -194,6 +198,7 @@ export default function App(): React.JSX.Element {
           clearScannedProducts={() => setScannedOrderProducts([])}
           addOrderItem={addOrderItem}
           orderItemChangeAmount={orderItemChangeAmount}
+          onOrderCreated={() => setPage('home')}
         />
       ) : (
         <Text className="text-gray-900 dark:text-white">Unknown page</Text>

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import Button from '@/components/Button';
 import SearchInput from '@/components/SearchInput';
-import {createOrder} from '@/lib/products';
+import {createOrder, getProducts} from '@/lib/products';
 import {Order, OrderItem} from '@/models/orders';
 import {Product} from '@/models/products';
 
@@ -26,6 +26,7 @@ type SaleProps = {
   onScanClick: () => void;
   addOrderItem: (p: Product) => void;
   orderItemChangeAmount: (productId: string, amount: number) => void;
+  onOrderCreated: () => void;
 };
 
 type ItemProps = {
@@ -83,16 +84,50 @@ function Item(props: ItemProps) {
 export default function Sale(props: SaleProps): React.JSX.Element {
   const [modalVisible, setModalVisible] = useState(false);
   const [isCreatingOrder, setCreatingOrder] = useState(false);
+  const [isAutoCompletionVisible, setAutoCompletionVisible] = useState(false);
+  const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     setModalVisible(props.scannedProducts.length > 1);
   }, [props.scannedProducts, setModalVisible]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => searchProducts(searchValue), 500);
+    return () => clearTimeout(timeout);
+  }, [searchValue]);
+
+  function searchProducts(name: string) {
+    if (name.length > 0) {
+      getProducts({name: name})
+        .then(response => {
+          setAutoCompletionVisible(true);
+          setSearchedProducts(response.data);
+        })
+        .catch(error => {
+          Alert.alert('Error', error.response?.data, undefined, {
+            cancelable: true,
+          });
+        });
+    } else {
+      setSearchedProducts([]);
+      setAutoCompletionVisible(false);
+    }
+  }
 
   function selectBarcode(p?: Product) {
     if (p) {
       props.addOrderItem(p);
     }
     props.clearScannedProducts();
+  }
+
+  function selectAutoCompletion(p: Product) {
+    props.addOrderItem(p);
+    setAutoCompletionVisible(false);
+    setSearchedProducts([]);
+    setSearchValue('');
+    Keyboard.dismiss();
   }
 
   function sell() {
@@ -108,7 +143,8 @@ export default function Sale(props: SaleProps): React.JSX.Element {
     setCreatingOrder(true);
     createOrder(order)
       .then(() => {
-        console.log('order created');
+        setSearchedProducts([]);
+        props.onOrderCreated();
       })
       .catch(error => {
         Alert.alert('Error', error.response?.data, undefined, {
@@ -170,6 +206,42 @@ export default function Sale(props: SaleProps): React.JSX.Element {
             </View>
           </Modal>
 
+          {isAutoCompletionVisible ? (
+            <View className="absolute w-full z-10 top-16">
+              <View className="space-y-1.5 mt-2 p-1 bg-gray-500 rounded-xl">
+                {searchedProducts.length > 0 ? (
+                  searchedProducts.slice(0, 6).map(p => (
+                    <Pressable
+                      disabled={p.quantity <= 0}
+                      key={p.id}
+                      className={clsx(
+                        'bg-gray-300 dark:bg-gray-800 p-4 rounded-xl',
+                        p.quantity === 0 && 'opacity-80',
+                      )}
+                      onPress={() => selectAutoCompletion(p)}>
+                      <Text className="text-xl text-gray-900 dark:text-gray-200">
+                        {p.name} - {p.packaging}
+                      </Text>
+                      {p.quantity === 0 ? (
+                        <Text className="text-xl mt-2 text-red-500 dark:text-red-600">
+                          Unavailable
+                        </Text>
+                      ) : p.quantity <= 10 ? (
+                        <Text className="text-xl mt-2 text-gray-700 dark:text-gray-400">
+                          Left {p.quantity} on sale
+                        </Text>
+                      ) : null}
+                    </Pressable>
+                  ))
+                ) : (
+                  <Text className="text-gray-900 dark:text-gray-200 px-4 py-2 text-xl">
+                    Can't find products
+                  </Text>
+                )}
+              </View>
+            </View>
+          ) : null}
+
           <SearchInput
             placeholder="Search product"
             icon={{
@@ -178,6 +250,8 @@ export default function Sale(props: SaleProps): React.JSX.Element {
                 <ScanBarcodeIcon className="text-gray-400" size={24} />
               ),
             }}
+            value={searchValue}
+            onChangeText={setSearchValue}
           />
 
           <ScrollView>
