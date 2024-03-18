@@ -5,6 +5,7 @@ import {ActivityIndicator, Pressable, PressableProps, Text} from 'react-native';
 interface ButtonProps extends PressableProps {
   title: string;
   loading?: boolean;
+  titleClassName?: string;
 }
 
 export default function Button(props: ButtonProps): React.JSX.Element {
@@ -24,6 +25,7 @@ export default function Button(props: ButtonProps): React.JSX.Element {
           className={clsx(
             props.disabled ? 'text-gray-300' : 'text-white',
             'text-center text-lg',
+            props.titleClassName,
           )}>
           {props.title}
         </Text>

@@ -1,6 +1,7 @@
 import {LogOutIcon, PlusIcon, ScanBarcodeIcon} from 'lucide-react-native';
 import React, {useEffect, useState} from 'react';
 import {Pressable, Text, View} from 'react-native';
+import Button from '@/components/Button';
 import {getStats} from '@/lib/products';
 import {getUser} from '@/lib/user';
 import {Stats} from '@/models/products';
@@ -87,6 +88,14 @@ export default function Home(props: HomeProps): React.JSX.Element {
           title="Barcodes"
           count={stats?.barcodes ?? 0}
           onClick={() => props.onPageSelect('add_barcode')}
+        />
+      ) : null}
+      {user?.privileges.includes('create_order') ? (
+        <Button
+          title="Sale"
+          className="py-4"
+          titleClassName="text-2xl"
+          onPress={() => props.onPageSelect('sale')}
         />
       ) : null}
     </View>

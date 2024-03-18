@@ -1,3 +1,4 @@
+import {Order} from '@/models/orders';
 import {
   PaginatedResponse,
   Product,
@@ -27,7 +28,9 @@ export async function getProductBarcodes(limit: number = 1, page: number = 1) {
 }
 
 export async function getProducts(filter: ProductFilter) {
-  return await axiosClient.post<PaginatedResponse<Product>>('/product', filter);
+  return (
+    await axiosClient.post<PaginatedResponse<Product>>('/product', filter)
+  ).data;
 }
 
 export async function addProduct(data: ProductAdd) {
@@ -52,4 +55,8 @@ export async function getStats(): Promise<Stats> {
     products: stats.data.typeCount,
     barcodes: barcodes.data.total,
   };
+}
+
+export async function createOrder(order: Order) {
+  return await axiosClient.post('/order/create', order);
 }

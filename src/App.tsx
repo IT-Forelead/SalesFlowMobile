@@ -2,13 +2,15 @@ import React from 'react';
 import {useEffect, useState} from 'react';
 import {Alert, BackHandler, SafeAreaView, Text} from 'react-native';
 import {check as check_auth, logout} from '@/lib/auth';
-import {getByBarcode} from '@/lib/products';
-import {ProductAddData, ProductBarcode} from '@/models/products';
+import {getByBarcode, getProducts} from '@/lib/products';
+import {OrderItem} from '@/models/orders';
+import {Product, ProductAddData, ProductBarcode} from '@/models/products';
 import BarcodeAdd from '@/screens/BarcodeAdd';
 import Loading from '@/screens/Loading';
 import Login from '@/screens/Login';
 import Home from '@/screens/Home';
 import ProductAdd from '@/screens/ProductAdd';
+import Sale from '@/screens/Sale';
 import Scanner from '@/screens/Scanner';
 import Success from '@/screens/Success';
 
@@ -19,6 +21,7 @@ type Page =
   | 'scanner'
   | 'product-add'
   | 'barcode-add'
+  | 'sale'
   | 'success';
 
 export default function App(): React.JSX.Element {
@@ -26,6 +29,10 @@ export default function App(): React.JSX.Element {
   const [productAddData, setProductAddData] = useState<ProductAddData>({});
   const [scanNext, setScanNext] = useState<string | undefined>(undefined);
   const [productBarcodes, setProductBarcodes] = useState<ProductBarcode[]>([]);
+  const [scannedOrderProducts, setScannedOrderProducts] = useState<Product[]>(
+    [],
+  );
+  const [orderProducts, setOrderProducts] = useState<OrderItem[]>([]);
 
   useEffect(() => {
     const backAction = () => {
@@ -36,6 +43,15 @@ export default function App(): React.JSX.Element {
       } else if (page === 'scanner') {
         setPage('home');
         setScanNext(undefined);
+        return true;
+      } else if (page === 'sale') {
+        setScanNext(undefined);
+        setOrderProducts([]);
+        setScannedOrderProducts([]);
+        setPage('home');
+        return true;
+      } else if (page !== 'home') {
+        setPage('home');
         return true;
       }
       return false;
@@ -68,7 +84,44 @@ export default function App(): React.JSX.Element {
       });
       setProductAddData({barcode: +value});
       setPage('barcode-add');
+    } else if (scanNext === 'sale') {
+      getProducts({barcode: +value}).then(response => {
+        if (response.data.length === 1) {
+          addOrderItem(response.data[0]);
+        }
+        setScannedOrderProducts(response.data);
+      });
+      setPage('sale');
     }
+  }
+
+  function addOrderItem(product: Product) {
+    const filtered = orderProducts.filter(p => p.productId === product.id);
+    if (filtered.length > 0) {
+      orderItemChangeAmount(product.id, filtered[0].amount + 1);
+    } else {
+      setOrderProducts([
+        ...orderProducts,
+        {
+          productId: product.id,
+          title: product.name + ' - ' + product.packaging,
+          price: product.price,
+          amount: 1,
+          maxAmount: product.quantity,
+        },
+      ]);
+    }
+  }
+
+  function orderItemChangeAmount(productId: string, amount: number) {
+    setOrderProducts(
+      orderProducts.map(p => {
+        if (p.productId === productId && p.maxAmount > amount) {
+          return {...p, amount: amount};
+        }
+        return p;
+      }),
+    );
   }
 
   function onAdded() {
@@ -76,7 +129,9 @@ export default function App(): React.JSX.Element {
   }
 
   function onPageSelect(value: string) {
-    if (value === 'add_product_without_barcode') {
+    if (value === 'sale') {
+      setPage('sale');
+    } else if (value === 'add_product_without_barcode') {
       setProductBarcodes([]);
       setPage('product-add');
     } else {
@@ -128,6 +183,18 @@ export default function App(): React.JSX.Element {
         />
       ) : page === 'barcode-add' ? (
         <BarcodeAdd barcode={productAddData.barcode!} onAdded={onAdded} />
+      ) : page === 'sale' ? (
+        <Sale
+          onScanClick={() => {
+            setScanNext('sale');
+            setPage('scanner');
+          }}
+          products={orderProducts}
+          scannedProducts={scannedOrderProducts}
+          clearScannedProducts={() => setScannedOrderProducts([])}
+          addOrderItem={addOrderItem}
+          orderItemChangeAmount={orderItemChangeAmount}
+        />
       ) : (
         <Text className="text-gray-900 dark:text-white">Unknown page</Text>
       )}
