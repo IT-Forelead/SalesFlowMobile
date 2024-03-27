@@ -24,6 +24,7 @@ import {
 } from '@/models/products';
 
 type ProductAddProps = {
+  barcode?: number;
   productBarcodes: ProductBarcode[];
   onProductAdded: () => void;
   goBack: () => void;
@@ -40,9 +41,15 @@ type FormErrors = {
 
 export default function ProductAdd(props: ProductAddProps): React.JSX.Element {
   const [product, setProduct] = useState<ProductAddForm>({
-    barcode: '',
-    name: '',
-    packaging: '',
+    barcode: props?.barcode?.toString() ?? '',
+    name:
+      props.productBarcodes.length === 1
+        ? props.productBarcodes[0].trademark
+        : '',
+    packaging:
+      props.productBarcodes.length === 1
+        ? props.productBarcodes[0].packaging
+        : '',
     quantity: '',
     price: '',
     saleType: '',

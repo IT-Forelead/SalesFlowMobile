@@ -32,11 +32,13 @@ export default function App(): React.JSX.Element {
   const [scannedOrderProducts, setScannedOrderProducts] = useState<Product[]>(
     [],
   );
+  const [scannedBarcode, setScannedBarcode] = useState<number | undefined>();
   const [orderProducts, setOrderProducts] = useState<OrderItem[]>([]);
 
   useEffect(() => {
     const backAction = () => {
       if (page === 'product-add' || page === 'barcode-add') {
+        setScannedBarcode(undefined);
         setProductAddData({});
         setPage('home');
         return true;
@@ -67,6 +69,7 @@ export default function App(): React.JSX.Element {
 
   function onScanned(value: string) {
     setPage('loading');
+    setScannedBarcode(+value);
     if (scanNext === 'add_product') {
       getByBarcode(value)
         .then(data => {
@@ -181,6 +184,7 @@ export default function App(): React.JSX.Element {
         <Scanner onScanned={onScanned} />
       ) : page === 'product-add' ? (
         <ProductAdd
+          barcode={scannedBarcode}
           productBarcodes={productBarcodes}
           onProductAdded={onAdded}
           goBack={() => setPage('home')}
