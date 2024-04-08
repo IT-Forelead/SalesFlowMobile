@@ -81,7 +81,7 @@ export default function App(): React.JSX.Element {
         });
     } else if (scanNext === 'add_barcode') {
       getByBarcode(value).then(response => {
-        if (response.length > 1) {
+        if (response.length > 0) {
           Alert.alert('Error', 'Already added', undefined, {cancelable: true});
         }
       });
