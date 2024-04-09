@@ -190,7 +190,12 @@ export default function App(): React.JSX.Element {
           goBack={() => setPage('home')}
         />
       ) : page === 'barcode-add' ? (
-        <BarcodeAdd barcode={productAddData.barcode!} onAdded={onAdded} />
+        <BarcodeAdd
+          barcode={productAddData.barcode!}
+          productBarcodes={productBarcodes}
+          onAdded={onAdded}
+          goBack={() => setPage('home')}
+        />
       ) : page === 'sale' ? (
         <Sale
           onScanClick={() => {

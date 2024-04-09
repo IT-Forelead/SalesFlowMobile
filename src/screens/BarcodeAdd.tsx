@@ -4,23 +4,29 @@ import {
   Alert,
   Keyboard,
   KeyboardAvoidingView,
+  Modal,
   Platform,
+  Pressable,
   ScrollView,
   Text,
   TouchableWithoutFeedback,
+  View,
 } from 'react-native';
 import Button from '@/components/Button';
 import Input from '@/components/Input';
 import SegmentedButtons from '@/components/SegmentedButtons';
 import {addProductBarcode} from '@/lib/products';
 import {
+  ProductBarcode,
   ProductBarcodeAddForm,
   ProductBarcodeAdd as ProductBarcodeAddType,
 } from '@/models/products';
 
 type BarcodeAddProps = {
   barcode: number;
+  productBarcodes: ProductBarcode[];
   onAdded: () => void;
+  goBack: () => void;
 };
 
 type FormErrors = {
@@ -31,16 +37,19 @@ type FormErrors = {
 
 export default function BarcodeAdd({
   barcode,
+  productBarcodes,
   onAdded,
+  goBack,
 }: BarcodeAddProps): React.JSX.Element {
   const [product, setProduct] = useState<ProductBarcodeAddForm>({
     barcode: barcode.toString(),
-    packaging: '',
-    trademark: '',
+    packaging: productBarcodes.length === 1 ? productBarcodes[0].packaging : '',
+    trademark: productBarcodes.length === 1 ? productBarcodes[0].trademark : '',
   });
   const [formValidity, setFormValidity] = useState(false);
   const [adding, setAdding] = useState<boolean>(false);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [modalVisible, setModalVisible] = useState(productBarcodes.length > 1);
 
   useEffect(() => {
     const errors_: FormErrors = {};
@@ -58,9 +67,15 @@ export default function BarcodeAdd({
       errors_.packaging = 'Invalid';
       valid_ = false;
     }
+
+    if (productBarcodes.filter(p => p.trademark === product.trademark).length) {
+      errors_.trademark = 'Already exists';
+      valid_ = false;
+    }
+
     setFormValidity(valid_);
     setErrors(errors_);
-  }, [product]);
+  }, [product, productBarcodes]);
 
   function sendData() {
     setAdding(true);
@@ -83,6 +98,17 @@ export default function BarcodeAdd({
       });
   }
 
+  function selectBarcode(pb?: ProductBarcode) {
+    if (pb) {
+      setProduct({
+        ...product,
+        trademark: pb.trademark,
+        packaging: pb.packaging,
+      });
+    }
+    setModalVisible(false);
+  }
+
   const saleTypes = [
     {key: 'amount', label: 'Dona'},
     {key: 'g', label: 'g'},
@@ -97,6 +123,37 @@ export default function BarcodeAdd({
       className="pt-24 px-4">
       <TouchableWithoutFeedback onPress={() => Keyboard.dismiss}>
         <ScrollView>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={goBack}>
+            <View className="w-full h-full p-4 rounded-xl bg-white dark:bg-gray-950 pt-5">
+              <Text className="text-4xl text-center text-gray-900 dark:text-gray-200 mb-4">
+                Select barcode
+              </Text>
+
+              {productBarcodes.map(pb => (
+                <Pressable
+                  key={pb.id}
+                  className="bg-gray-300 dark:bg-gray-800 p-4 my-2 rounded-xl"
+                  onPress={() => selectBarcode(pb)}>
+                  <Text className="text-xl text-gray-900 dark:text-gray-200">
+                    {pb.trademark} - {pb.packaging}
+                  </Text>
+                </Pressable>
+              ))}
+
+              <Pressable
+                className="bg-gray-300 dark:bg-gray-800 p-4 mt-8 rounded-xl"
+                onPress={() => selectBarcode()}>
+                <Text className="text-xl text-gray-900 dark:text-gray-200">
+                  Fill manually
+                </Text>
+              </Pressable>
+            </View>
+          </Modal>
+
           <Text className=" text-gray-900 dark:text-gray-200 text-5xl text-center mb-5">
             Add Barcode
           </Text>
