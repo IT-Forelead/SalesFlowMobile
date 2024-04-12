@@ -70,24 +70,8 @@ export default function App(): React.JSX.Element {
   function onScanned(value: string) {
     setPage('loading');
     setScannedBarcode(+value);
-    if (scanNext === 'add_product') {
-      getByBarcode(value)
-        .then(data => {
-          setProductBarcodes(data);
-          setPage('product-add');
-        })
-        .catch(() => {
-          console.log('rejected');
-        });
-    } else if (scanNext === 'add_barcode') {
-      getByBarcode(value).then(response => {
-        if (response.length > 0) {
-          Alert.alert('Error', 'Already added', undefined, {cancelable: true});
-        }
-      });
-      setProductAddData({barcode: +value});
-      setPage('barcode-add');
-    } else if (scanNext === 'sale') {
+
+    if (scanNext === 'sale') {
       getProducts({barcode: +value}).then(response => {
         if (response.data.length === 1) {
           addOrderItem(response.data[0]);
@@ -95,6 +79,20 @@ export default function App(): React.JSX.Element {
         setScannedOrderProducts(response.data);
       });
       setPage('sale');
+    } else {
+      getByBarcode(value)
+        .then(data => {
+          setProductBarcodes(data);
+          if (scanNext === 'add_product') {
+            setPage('product-add');
+          } else if (scanNext === 'add_barcode') {
+            setProductAddData({barcode: +value});
+            setPage('barcode-add');
+          }
+        })
+        .catch(() => {
+          console.log('rejected');
+        });
     }
   }
 
